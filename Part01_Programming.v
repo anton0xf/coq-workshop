@@ -1,33 +1,47 @@
+(* Vernacular and Gallina *) 
+
+(* comments and command separator *)
+
 Require Import Bool.
 Require Import Arith.
 
-(* (customize-option 'company-coq-disabled-features) *)
-
 (** standard types and operations *)
 
+(* type declaration *)
 Check bool.
 Check nat.
 
-Check true. (* : bool *)
+Check (true : bool).
 Check true : bool.
 Fail Check true : nat.
+
+Check (bool : Set).
+Check (bool : Type).
+Check Set.
+Check Type.
+(* Set = Type(0) : Type(1) : Type(2) : ... *)
 
 Check (true && false) : bool.
 Compute (true && false). (* = false : bool *)
 
 Locate "_ && _".
 Locate "&&".
-(* Notation "x && y" := (andb x y) : bool_scope (default interpretation) *)
+(* Notation "x && y" := (andb x y) : bool_scope 
+   (default interpretation) *)
 
 Print Notation "_ && _". (* doesn't work in jscoq *)
-(* Notation "_ && _" at level 40 with arguments constr at level 40, constr at next level,
+(* Notation "_ && _" at level 40 with arguments constr at level 40, 
+   constr at next level,
    left associativity. *)
+
+Check true && false && true.
 
 Set Printing Parentheses.
 Check true && false && true. (* (true && false) && true : bool *)
 
 Print Notation "_ || _".
-(* Notation "_ || _" at level 50 with arguments constr at level 50, constr at next level,
+(* Notation "_ || _" at level 50 with arguments constr at level 50, 
+   constr at next level,
    left associativity. *)
 
 Check true || false && true. (* true || (false && true) : bool *)
@@ -36,30 +50,30 @@ Unset Printing Parentheses.
 
 Check 0: nat.
 Check 5: nat.
-Check (5 + 7) : nat.
+Check (5 + 7): nat.
 
 Compute (5 + 7). (* = 12 : nat *)
-
-Theorem equality_example : 5 + 7 = 12.
-Proof. simpl. reflexivity. Qed.
-
-Check theorem_example.
-
 Compute 2 * 3.
 
 (** definitions *)
 
-(* Vernacular and Gallina *) 
-
-Definition five: nat := 5.
+Definition five := 5.
 
 Check five.
 Compute five. (* = 5 : nat *)
 Compute five * 3.
 
-Definition fifteen := five * 3.
+Definition fifteen: nat := five * 3.
 Check fifteen.
 Compute fifteen.
+
+(* theorems *)
+
+Theorem equality_example : 5 + 7 = 12.
+Proof. simpl. reflexivity. Qed.
+
+Check equality_example.
+Print equality_example.
 
 (** functions *)
 
@@ -69,22 +83,26 @@ Definition mul3 (n: nat): nat := n * 3.
 Compute mul3 4. (* = 12 : nat *)
 
 Locate "*".
-(* Notation "x * y" := (Init.Nat.mul x y) : nat_scope (default interpretation) *)
+(* Notation "x * y" := (Init.Nat.mul x y) : nat_scope 
+   (default interpretation) *)
+
+Compute 2 * 3.
+Compute Nat.mul 2 3.
 
 Unset Printing Notations.
 Check 2 * 3. (* Init.Nat.mul 2 3 : nat *)
 Set Printing Notations.
 
-Compute Nat.mul 2 3.
-Check (Nat.mul 2) 3. (* 2 * 3 : nat *)
+Check Nat.mul 2 3.
 
 Compute 5 + mul3 7.
 Compute Nat.add 5 (mul3 7).
 
-Check mul3 : nat -> nat.
+(* function types *)
+Check mul3: nat -> nat.
 
-Check Nat.mul : nat -> nat -> nat.
-Check Nat.mul : nat -> (nat -> nat).
+Check Nat.mul: nat -> nat -> nat.
+Check Nat.mul: nat -> (nat -> nat).
 Fail Check Nat.mul : (nat -> nat) -> nat.
 
 Set Printing Parentheses.
@@ -92,15 +110,15 @@ Check Nat.mul. (* : nat -> (nat -> nat) *)
 Unset Printing Parentheses.
 
 (* Curring *)
-Check Nat.mul : nat -> (nat -> nat).
-Check Nat.mul 3 : nat -> nat.
+Check Nat.mul 2 : nat -> nat.
+Check (Nat.mul 2) 3. (* 2 * 3 : nat *)
 
 Definition mul3_curry: nat -> nat := Nat.mul 3.
 
 Compute mul3_curry 5.
 
-Theorem mul3_def: forall n: nat, mul3 n = n * 3.
-Proof. intro n. simpl. unfold mul3. reflexivity. Qed.
+Theorem mul3_def (n: nat): mul3 n = n * 3.
+Proof. simpl. unfold mul3. reflexivity. Qed.
 
 (** anonymous functions *)
 Check (fun (n: nat) => n * 3): nat -> nat.
@@ -118,6 +136,8 @@ Definition sum_sq3_5: nat -> (nat -> nat) := sum_sq3 5.
 Compute sum_sq3_5 6 7.
 Compute (sum_sq3_5 6) 7.
 Compute ((sum_sq3 5) 6) 7.
+
+(* end? *)
 
 (* you can ommit some types *)
 Definition five' := 5.
@@ -150,6 +170,12 @@ Definition mul3''  (n: _): _ := n * 3.
 Definition repeat2 (f: nat -> nat) (n: nat): nat := f (f n).
 Compute repeat2 mul3 5.
 Check repeat2.
+
+(* curring examples *)
+Definition mul3x2 := repeat2 mul3.
+
+Definition comp (f g: nat -> nat) (n: nat) := f (g n).
+Definition repeat2 (f: nat -> nat) := comp f f.
 
 (** generic functions *)
 

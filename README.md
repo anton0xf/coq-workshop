@@ -21,8 +21,18 @@
   * доказывать теоремы в т.ч. про алгоритмы и программы
   * писать программы с гарантированными свойствами и извлекать из них программы на некотрых других языках
   * помогать LLM
+* Другие похожие системы
+  * Lean
+  * Agda
+  * Idris
 
-## Материалы
+## Материалы к воркшопу
 * [Part01_Programming.v](./Part01_Programming.v) - базовые элементы программирования и самые первые доказательства
 * [Part02_Ind.v](./Part02_Ind.v) - простые индуктивные типы и чуть более содержательные доказательства
+
+# Для самостоятельного изучения
+* [Software Foundations](https://softwarefoundations.cis.upenn.edu/)
+* [Coq in a Hurry](https://cel.hal.science/inria-00001173v4/file/coq-hurry.pdf)
+* [Coq'Art](https://www.labri.fr/perso/casteran/CoqArt/)
+* [TAPL](https://www.cis.upenn.edu/~bcpierce/tapl/) - Types and Programming Languages
 
