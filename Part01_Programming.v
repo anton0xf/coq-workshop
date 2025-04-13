@@ -11,6 +11,7 @@ Require Import Arith.
 Check bool.
 Check nat.
 
+Check true.
 Check (true : bool).
 Check true : bool.
 Fail Check true : nat.
@@ -89,14 +90,18 @@ Locate "*".
 Compute 2 * 3.
 Compute Nat.mul 2 3.
 
+Check (Nat.mul 2 3).
+
 Unset Printing Notations.
 Check 2 * 3. (* Init.Nat.mul 2 3 : nat *)
 Set Printing Notations.
 
 Check Nat.mul 2 3.
 
-Compute 5 + mul3 7.
+Compute 5 + (mul3 7).
 Compute Nat.add 5 (mul3 7).
+
+Compute (Nat.mul 2 3).
 
 (* function types *)
 Check mul3: nat -> nat.
@@ -120,6 +125,9 @@ Compute mul3_curry 5.
 Theorem mul3_def (n: nat): mul3 n = n * 3.
 Proof. simpl. unfold mul3. reflexivity. Qed.
 
+Theorem mul3_def': forall n: nat, mul3 n = n * 3.
+Proof. intro n. unfold mul3. reflexivity. Qed.
+
 (** anonymous functions *)
 Check (fun (n: nat) => n * 3): nat -> nat.
 Compute (fun (n: nat) => n * 3) 2.
@@ -137,8 +145,6 @@ Compute sum_sq3_5 6 7.
 Compute (sum_sq3_5 6) 7.
 Compute ((sum_sq3 5) 6) 7.
 
-(* end? *)
-
 (* you can ommit some types *)
 Definition five' := 5.
 Check five.
@@ -148,10 +154,14 @@ Definition mul3' n := n * 3.
 Check mul3' : nat -> nat.
 Compute mul3' 4.
 
+Check (fun n => n * 2).
+
 (* hole *)
-Definition const1 (_: nat): nat := 1.
+Definition const1 (a: nat): _ := 1.
 
 Check const1 : nat -> nat.
+
+Compute const1 10.
 
 Definition const1'  (_: nat)    := 1.
 Definition const1'' (_: nat): _ := 1.
@@ -175,12 +185,17 @@ Check repeat2.
 Definition mul3x2 := repeat2 mul3.
 
 Definition comp (f g: nat -> nat) (n: nat) := f (g n).
-Definition repeat2 (f: nat -> nat) := comp f f.
+Definition repeat2' (f: nat -> nat) := comp f f.
 
 (** generic functions *)
 
 Definition repeat2_gen (X: Type) (f: X -> X) (x: X): X := f (f x).
+Check repeat2_gen.
+Check repeat2_gen nat.
+Check repeat2_gen bool.
+
 Compute repeat2_gen nat mul3 5.
+Compute repeat2_gen _ mul3 5.
 Compute repeat2_gen bool negb true.
 
 Arguments repeat2_gen {X}.
@@ -188,6 +203,7 @@ Arguments repeat2_gen {X}.
 Compute repeat2_gen mul3 5.
 Compute repeat2_gen negb true.
 
+Check @repeat2_gen nat
 Compute @repeat2_gen nat mul3 5.
 
 Definition repeat2_gen' {X: Type} (f: X -> X) (x: X): X := f (f x).
