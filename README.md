@@ -17,14 +17,16 @@
   * Проблема 4х красок 
   * [CompCert](https://en.wikipedia.org/wiki/CompCert)
   * [BB(5)](https://en.wikipedia.org/wiki/Busy_beaver)
+    [Up and Atom video](https://www.youtube.com/watch?v=pQWFSj1CXeg)
 * Что можно делать
   * доказывать теоремы в т.ч. про алгоритмы и программы
   * писать программы с гарантированными свойствами и извлекать из них программы на некотрых других языках
-  * помогать LLM
+  * помогать LLM ([пример от OpenAI](https://openai.com/index/formal-math/))
 * Другие похожие системы
   * Lean
   * Agda
   * Idris
+* [Выпуск](https://podlodka.io/268) подкаста Podlodka про "Формальные методы и верификацию программ"
 
 ## Материалы к воркшопу
 * [Part01_Programming.v](./Part01_Programming.v) - базовые элементы программирования и самые первые доказательства
