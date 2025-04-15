@@ -163,5 +163,4 @@ Definition bool_to_B3 (b: bool): B3
 Theorem and3_incl: forall a b: bool, bool_to_B3 (andb a b) 
   = and3 (bool_to_B3 a) (bool_to_B3 b).
 Proof. destruct a, b; reflexivity. Qed.
-  
-(* TODO prove some interesting facts *)
+
