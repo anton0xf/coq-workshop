@@ -11,10 +11,10 @@ Check tt.
 
 Set Automatic Proposition Inductives.
 
-Inductive bool: Type := true | false.
+Inductive bool: Type := | true | false.
 Check true: bool.
 Check false: bool.
-(* true : bool : Type *)
+(* true : bool : Type (Set) *)
 
 Inductive issue_state: Type :=
 | new
@@ -29,11 +29,11 @@ Proof. reflexivity. Qed.
 Theorem true_not_false: true <> false.
 Proof. discriminate. Qed.
 
-Check true = true : Prop.
+Check true <> true : Prop. (* TODO what the level? *)
 
 Theorem all_bools: forall b: bool, b = true \/ b = false.
 Proof.
-  intro b. destruct b.
+  intro b. simpl. destruct b.
   - (* b = true *) left. reflexivity.
   - (* b = false *) right. reflexivity.
 Qed.
@@ -48,7 +48,7 @@ Qed.
 Theorem bools_is_eq': true = true /\ false = false.
 Proof. split; reflexivity. Qed.
 
-Theorem empty_exfalso: forall x: empty, 1 = 0.
+Theorem empty_exfalso: forall _: empty, 1 = 0.
 Proof. intro x. destruct x. Qed.
 
 Definition negb (b: bool): bool
@@ -73,7 +73,6 @@ Print Notation "_ && _".
    left associativity. *)
 
 (* https://rocq-prover.org/doc/V9.0.0/corelib/Corelib.Init.Notations.html *)
-Require Init.Notations.
    
 Notation "x && y" := (andb x y).
 
@@ -104,8 +103,12 @@ Definition next_state (st: issue_state) :=
   end.
 
 Definition comp {X: Type} (f g: X -> X) (x: X) := f (g x).
+Definition repeat2' {X: Type} (f: X -> X) (x: X): X := comp f f x.
 Definition repeat2 {X: Type} (f: X -> X): X -> X := comp f f.
+
 Definition repeat4 {X: Type} (f: X -> X): X -> X := repeat2 (repeat2 f).
+Definition repeat4' {X: Type}: (X -> X) -> X -> X := repeat2 repeat2.
+Definition repeat4'' {X: Type}: _ := (@repeat2 (X -> X)) (@repeat2 X).
 
 Compute repeat4 (fun n => n * 2) 1.
 
@@ -160,7 +163,9 @@ Definition bool_to_B3 (b: bool): B3
      | false => F
      end.
 
-Theorem and3_incl: forall a b: bool, bool_to_B3 (andb a b) 
-  = and3 (bool_to_B3 a) (bool_to_B3 b).
-Proof. destruct a, b; reflexivity. Qed.
+Theorem and3_incl: forall a b: bool, 
+  bool_to_B3 (andb a b) = and3 (bool_to_B3 a) (bool_to_B3 b).
+Proof. 
+  destruct a, b; reflexivity.
+Qed.
 
