@@ -203,7 +203,7 @@ Arguments repeat2_gen {X}.
 Compute repeat2_gen mul3 5.
 Compute repeat2_gen negb true.
 
-Check @repeat2_gen nat
+Check @repeat2_gen nat.
 Compute @repeat2_gen nat mul3 5.
 
 Definition repeat2_gen' {X: Type} (f: X -> X) (x: X): X := f (f x).

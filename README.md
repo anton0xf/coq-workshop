@@ -30,7 +30,9 @@
 
 ## Материалы к воркшопу
 * [Part01_Programming.v](./Part01_Programming.v) - базовые элементы программирования и самые первые доказательства
-* [Part02_Ind.v](./Part02_Ind.v) - простые индуктивные типы и чуть более содержательные доказательства
+* [Part02_Ind_Enums.v](./Part02_Ind_Enums.v) - простые индуктивные типы и чуть более содержательные доказательства
+* [Part03_Ind_Params.v](./Part03_Ind_Params.v) - индуктивные типы с параметризованными аргументами
+* [Part04_Induction.v](./Part04_Induction.v) - математическая индукция (готовится)
 
 ## Для самостоятельного изучения
 * [Software Foundations](https://softwarefoundations.cis.upenn.edu/)
