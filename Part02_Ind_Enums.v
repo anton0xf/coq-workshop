@@ -30,6 +30,7 @@ Theorem true_not_false: true <> false.
 Proof. discriminate. Qed.
 
 Check true <> true : Prop. (* TODO what the level? *)
+(* https://rocq-prover.org/doc/V9.0.0/refman/language/core/sorts.html *)
 
 Theorem all_bools: forall b: bool, b = true \/ b = false.
 Proof.
