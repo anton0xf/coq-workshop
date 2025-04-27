@@ -4,7 +4,7 @@ Unset Automatic Proposition Inductives.
 
 Inductive empty: Type := .
 
-Inductive unit: Type := tt. (* constructor *)
+Inductive unit: Set := tt. (* constructor *)
 (* https://en.wikipedia.org/wiki/Unit_type *)
 
 Check tt.

@@ -1,8 +1,9 @@
 (** simple record *)
 
 (* Set/Type is optional *)
-Inductive boxed: Set := box (x: bool). (* x unused *)
+Inductive boxed: Type := box (x: bool). (* x unused *)
 Check box true.
+Compute box true.
 
 Definition unbox (bx: boxed): bool := 
 match bx with
@@ -55,17 +56,18 @@ Definition fst {A B: Type} (p: prod A B): A
      | pair a _ => a
      end.
 
+Compute fst (false, 42).
+
 Definition snd {A B: Type} (p: A * B): B
   := match p with
      | (_, b) => b
      end.
 
-Compute fst (false, 42).
 Compute snd (false, 42).
 
 Theorem fst_correct {A B: Type}: 
   forall (a: A) (b: B), fst (a, b) = a.
-Proof. reflexivity. Qed.
+Proof. intros a b. simpl. reflexivity. Qed.
 
 Theorem snd_correct {A B: Type}: 
   forall (a: A) (b: B), snd (a, b) = b.
@@ -90,16 +92,21 @@ Inductive option (A: Type): Type :=
 | Some (_: A)
 | None.
 
+Inductive result (E A: Type): Type :=
+| ok (_: A)
+| error (_: E).
+
 Module ArrowForm.
 
   Inductive unit := tt: unit.
+  Inductive bool := true : bool | false : bool.
   
   Inductive boxed := box: bool -> boxed.
   Inductive bool_prod := bool_pair: bool -> bool -> bool_prod.
 
   Inductive option (A: Type): Type :=
   | Some: A -> option A
-  | None: option A.
+  | None.
 
 End ArrowForm.
 
@@ -136,6 +143,8 @@ Definition div2 (n: nat): option nat
      then Some (Nat.div n 2)
      else None.
 
+Compute div2 4.
+Compute div2 5.
 Compute Some 4 >>= div2.
 Compute Some 3 >>= div2.
 Compute None >>= div2.
