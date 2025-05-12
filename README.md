@@ -33,6 +33,8 @@
 * [Part02_Ind_Enums.v](./Part02_Ind_Enums.v) - простые индуктивные типы и чуть более содержательные доказательства
 * [Part03_Ind_Params.v](./Part03_Ind_Params.v) - индуктивные типы с параметризованными аргументами
 * [Part04_Induction.v](./Part04_Induction.v) - математическая индукция
+* [Part05_Ind_Examples.v](./Part05_Ind_Examples.v) - ещё примеры: [бинарные деревья](https://en.wikipedia.org/wiki/Binary_tree) и суммы, пример нетривиального доказательства
+
 ## Для самостоятельного изучения
 * [Software Foundations](https://softwarefoundations.cis.upenn.edu/)
 * [Coq in a Hurry](https://cel.hal.science/inria-00001173v4/file/coq-hurry.pdf)

@@ -14,6 +14,8 @@ Definition pred (n: nat): nat
      | S n' => n'
      end.
 
+Compute pred two.
+
 Example pred_two: pred two = one.
 Proof. simpl. reflexivity. Qed.
 
@@ -35,16 +37,19 @@ Fixpoint add (n m: nat): nat
 
 Notation "n + m" := (add n m).
 
-Theorem add_O_l (n: nat): O + n = n.
-Proof. reflexivity. Qed.
+Theorem add_O_l: forall (n: nat), O + n = n.
+Proof. intro n. reflexivity. Qed.
 
 (* same as forall *)
 Check add_O_l. (* : forall n : nat, O + n = n *)
 
-Check add_O_l two.
+Check add_O_l two : (O + two) = two.
+Check (O + two) = two : Prop.
 
 Example add_O_two: O + two = two.
 Proof. exact (add_O_l two). Qed.
+
+Definition add_O_two'': O + two = two := add_O_l two.
 
 Example add_O_two': O + two = two.
 Proof. apply add_O_l. Qed.
@@ -70,7 +75,11 @@ Theorem exfalso: forall A: Prop, true = false -> A.
 Proof. intros A H. discriminate H. Qed.
 
 Theorem eq_S (n m: nat): n = m -> S n = S m.
-Proof. intro H. rewrite H. reflexivity. Qed. (* <- -> *)
+Proof. 
+  (* forall H: (n = m), ((S n) = (S m)) *)
+  intro H. rewrite H. (* <- -> *)
+  reflexivity. 
+Qed.
 
 Locate "_ -> _".
 (* Notation "A -> B" := (forall _ : A, B) : type_scope (default interpretation) *)
@@ -94,6 +103,7 @@ Qed.
 Theorem add_O_r (n: nat): n + O = n.
 Proof. 
   Fail reflexivity.
+  Print add.
   simpl. destruct n as [ | n'].
   - (* n = O *) reflexivity.
   - (* n = S n' *) simpl. f_equal. 
@@ -108,29 +118,25 @@ Check nat_ind.
 
 Theorem add_O_r (n: nat): n + O = n.
 Proof.
+  Check nat_ind.
   Check (nat_ind (fun n => n + O = n)).
   apply (nat_ind (fun n => n + O = n)).
   - reflexivity.
-  - intros k H. simpl. rewrite H. reflexivity.
+  - intro k. intro H. simpl. rewrite H. reflexivity.
 Qed.
 
 Theorem add_O_r' (n: nat): n + O = n.
 Proof.
-  induction n as [ | n' IH ].
+  induction n as [ | k IH ].
   - reflexivity.
-  - simpl. rewrite IH. reflexivity.
+  - Print add. simpl. rewrite IH. reflexivity.
 Qed.
-
-(* Theorem add_comm: forall (n m: nat), n + m = m + n.
-Proof.
-  induction n.
-  - intro m. rewrite add_O_l. rewrite add_O_r. reflexivity.
-  - intro m. simpl. *)
 
 End MyNat.
 
 Require Import Arith.
 Import Nat.
+Check add.
 
 Module MyList.
 
@@ -201,8 +207,9 @@ Theorem app_assoc {A: Type}: forall xs ys zs: list A,
 Proof.
   Print list.
   induction xs as [ | x xs' IH].
-  - simpl. reflexivity.
-  - simpl. intros ys zs. rewrite IH. reflexivity.
+  - (* xs = [] *) simpl. reflexivity.
+  - (* xs = x :: xs' *)
+    simpl. intros ys zs. rewrite IH. reflexivity.
 Qed.
 
 End MyList.
@@ -214,126 +221,3 @@ Import ListNotations.
 
 Check 1 :: nil.
 Check [1; 2].
-
-(* bin-tree *)
-Inductive bin_tree (A: Type) :=
-| leaf
-| node (val: A) (left right: bin_tree A).
-
-Arguments leaf {A}.
-Arguments node {A}.
-
-Notation "{{ }}" := leaf.
-Notation "{{ x }}" := (node x leaf leaf).
-Notation "l <~ x ~> r" := (node x l r) (at level 100).
-
-Check node 1 leaf leaf.
-Check node 1 leaf (node 2 leaf leaf).
-Check {{4}} <~ 2 ~> {{5}}.
-Definition tree_ex := 
-  ({{4}} <~ 2 ~> {{5}}) <~ 1 ~> ({{6}} <~ 3 ~> {{}}).
-
-(* https://en.wikipedia.org/wiki/Tree_rotation *)
-Definition rotate_right {A: Type} (t: bin_tree A)
-  : option (bin_tree A) 
-  := match t with
-     |      (a <~ A ~> b) <~ B ~> c => 
-       Some (a <~ A ~> (b <~ B ~> c))
-     | _ => None
-     end.
-
-Compute rotate_right tree_ex.
-
-Fixpoint height {A: Type} (t: bin_tree A): nat :=
-  match t with
-  | {{}} => 0
-  | t1 <~ _ ~> t2 => 1 + max (height t1) (height t2)
-  end.
-
-Compute height {{7}}.
-Compute height ({{3}} <~ 7 ~> {{}}).
-
-Theorem height_node {A: Type} (x: A) (t1 t2: bin_tree A):
-  height (t1 <~ x ~> t2) = 1 + max (height t1) (height t2).
-Proof. reflexivity. Qed.
-
-Fixpoint size {A: Type} (t: bin_tree A): nat :=
-  match t with
-  | {{}} => 0
-  | t1 <~ _ ~> t2 => 1 + (size t1) + (size t2)
-  end.
-
-Theorem size_lt {A: Type} (t: bin_tree A):
-  size t < 2^(height t).
-Proof.
-  (*
-    Base: t = {{}} => size t = 0 /\ height t = 0 => 0 < 2^0 = 1
-    Step: t = t1 <~ x ~> t2:
-      size t1 < 2 ^ height t1 /\ size t2 < 2 ^ height t2 ->
-        size t < 2 ^ height t
-      
-      size t1 < 2 ^ height t1 <=> 1 + size t1 <= 2 ^ height t1
-      size t2 < 2 ^ height t2 <=> 1 + size t2 <= 2 ^ height t2
-      
-      sum:  2 + size t1 + size t2 <= (2 ^ height t1) + (2 ^ height t2)
-      goal: 1 + size t1 + size t2 < 2 ^ (1 + max (height t1) (height t2))
-            2 + size t1 + size t2 <= 2 * 2 ^ max (height t1) (height t2)
-
-      new goal: (2 ^ height t1) + (2 ^ height t2) <=
-                   2 * 2 ^ max (height t1) (height t2)
-   *)
-  Locate "<". unfold Peano.lt.
-  induction t as [ | x t1 IH1 t2 IH2].
-  - simpl. Search (?x <= ?x). apply le_n.
-  - simpl.
-    Search (_ + 0 = _). rewrite add_0_r.
-    Search (_ + _ <= _ + _). Fail apply add_le_mono.
-    Search (S (_ + _) = _ + S _). rewrite plus_n_Sm.
-    Search (S _ + _ = S (_ + _)). rewrite <- plus_Sn_m.
-    apply add_le_mono.
-    + Search (?a <= ?b -> ?b <= ?c -> ?a <= ?c).
-      apply le_trans with (2 ^ height t1).
-      * exact IH1.
-      * Search pow Peano.le. apply pow_le_mono_r.
-        { discriminate. }
-        Search Peano.le max. apply le_max_l.
-    + apply le_trans with (2 ^ height t2). { exact IH2. }
-      apply pow_le_mono_r. { discriminate. }
-      apply le_max_r.
-Qed.    
-
-Theorem size_lt' {A: Type} (t: bin_tree A):
-  size t < 2^(height t).
-Proof.
-  unfold Peano.lt.
-  induction t as [ | x t1 IH1 t2 IH2]; simpl.
-  { apply le_n. } rewrite add_0_r, plus_n_Sm.
-  rewrite <- plus_Sn_m. apply add_le_mono.
-  - apply le_trans with (2 ^ height t1). { exact IH1. }
-    apply pow_le_mono_r. { discriminate. }
-    apply le_max_l.
-  - apply le_trans with (2 ^ height t2). { exact IH2. }
-    apply pow_le_mono_r. { discriminate. }
-    apply le_max_r.
-Qed.    
-
-(* sum type *)
-Inductive sum (A B: Type) : Type :=
-| inl : A -> sum A B
-| inr : B -> sum A B.
-
-Notation "x + y" := (sum x y): type_scope.
-
-Arguments inl {A B} _ , {A} B _.
-Arguments inr {A B} _ , A {B} _.
-
-Definition f (n: nat): bool + nat :=
-  match n with
-  | 0 => inl false
-  | 1 => inl true
-  | n => inr (n - 2)
-  end.
-
-Compute f 0.
-Compute f 1.
-Compute f 5.
