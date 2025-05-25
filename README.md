@@ -34,6 +34,7 @@
 * [Part03_Ind_Params.v](./Part03_Ind_Params.v) - индуктивные типы с параметризованными аргументами
 * [Part04_Induction.v](./Part04_Induction.v) - математическая индукция
 * [Part05_Ind_Examples.v](./Part05_Ind_Examples.v) - ещё примеры: [бинарные деревья](https://en.wikipedia.org/wiki/Binary_tree) и суммы, пример нетривиального доказательства
+* [Part06_Ind_Prop.v](./Part06_Ind_Prop.v) - индуктивные пропозиции на примере логических связок
 
 ## Для самостоятельного изучения
 * [Software Foundations](https://softwarefoundations.cis.upenn.edu/)

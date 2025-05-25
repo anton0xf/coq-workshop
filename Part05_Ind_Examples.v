@@ -11,6 +11,9 @@ Check node.
 Arguments leaf {A}.
 Arguments node {A}.
 
+Check node 1 leaf leaf.
+Check node 1 leaf (node 2 leaf leaf).
+
 Notation "{{ }}" := leaf.
 Notation "{{ x }}" := (node x leaf leaf).
 Notation "l <~ x ~> r" := (node x l r) (at level 100).
@@ -65,6 +68,11 @@ Fixpoint size {A: Type} (t: bin_tree A): nat :=
   | t1 <~ _ ~> t2 => 1 + (size t1) + (size t2)
   end.
 
+Compute size {{}}.
+Compute size {{7}}.
+Compute size ({{3}} <~ 7 ~> {{}}).
+Compute size tree_ex.
+
 Theorem size_lt {A: Type} (t: bin_tree A):
   size t < 2^(height t).
 Proof.
@@ -87,16 +95,17 @@ Proof.
    *)
   Locate "_ < _". Print Peano.lt. unfold Peano.lt.
   induction t as [ | x t1 IH1 t2 IH2].
-  - simpl. Search (?x <= ?x). Print le. Print Peano.le. 
-    apply le_n.
+  - simpl. Search (?x <= ?x). Print le_n. Print Peano.le.
+    Check le_n. apply le_n.
   - simpl.
-    Search (_ + 0 = _). rewrite add_0_r.
+    Search (?x + 0 = ?x). rewrite add_0_r.
     Search (_ + _ <= _ + _).
-    Search (?a <= ?b -> ?c <= ?d -> ?a + ?c <= ?b + ?d). 
+    Search (?a <= ?b -> ?c <= ?d -> ?a + ?c <= ?b + ?d).
     Fail apply add_le_mono.
     Search (S (_ + _) = _ + S _). rewrite plus_n_Sm.
     Search (S (_ + _) = (S _) + _).
-    Search (S _ + _ = S (_ + _)). rewrite <- plus_Sn_m.
+    Search ((S _) + _ = S (_ + _)). rewrite <- plus_Sn_m.
+    Check add_le_mono.
     apply add_le_mono.
     + Search (?a <= ?b -> ?b <= ?c -> ?a <= ?c).
       apply le_trans with (m := 2 ^ height t1).
@@ -128,13 +137,13 @@ Qed.
 
 (* sum type *)
 Inductive sum (A B: Type) : Type :=
-| inl: A -> sum A B
+| inl (a: A)
 | inr: B -> sum A B.
 
 Notation "x + y" := (sum x y): type_scope.
 
 Check inl.
-Arguments inl {A B} _.
+Arguments inl {A B}.
 Arguments inr {A B} _.
 
 Check inl.
