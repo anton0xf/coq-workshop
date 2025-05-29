@@ -2,7 +2,7 @@ Module MyLogic.
 
   (* False *)
   Inductive empty: Set := .
-  Inductive False: Prop := . (* TODO more details *)
+  Inductive False: Prop := .
 
   Example false: False.
   Proof. Abort.
