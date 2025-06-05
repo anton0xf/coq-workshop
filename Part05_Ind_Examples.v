@@ -138,7 +138,7 @@ Qed.
 (* sum type *)
 Inductive sum (A B: Type) : Type :=
 | inl (a: A)
-| inr: B -> sum A B.
+| inr (b: B).
 
 Notation "x + y" := (sum x y): type_scope.
 

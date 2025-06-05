@@ -41,6 +41,9 @@ Module MyLogic.
   Example ignore_premise' (A: Prop): A -> True 
     := fun (H: A) => I.
 
+  Example ignore_premise'': forall A: Prop, A -> True 
+    := fun (A: Prop) (H: A) => I.
+
   Example exfalso (A: Prop): False -> A.
   Proof. intro H. destruct H. Qed.
 
@@ -56,12 +59,12 @@ Module MyLogic.
 
   Example modus_ponens (A B: Prop): (A -> B) -> A -> B.
   Proof. (* associativity *)
-    intro HAB. intro HA. apply HAB. exact HA. 
+    intro HAB. intro HA. apply HAB. exact HA.
   Qed.
   
   Example modus_ponens' (A B: Prop): (A -> B) -> A -> B.
   Proof.
-    intro HAB. intro H. apply HAB in H. exact H. 
+    intro HAB. intro H. apply HAB in H as H'. exact H'. 
   Qed.
   
   Example modus_ponens'' (A B: Prop): (A -> B) -> A -> B.
@@ -73,7 +76,7 @@ Module MyLogic.
   Print modus_ponens.
   
   Example modus_ponens''' (A B: Prop): (A -> B) -> A -> B
-    := fun (HAB: A -> B) (HA: A) => HAB HA.
+    := fun (HAB: A -> B) => fun (HA: A) => HAB HA.
 
   Definition modus_ponens1 (A B: Prop) (HAB: A -> B) (HA: A): B
     := HAB HA.
@@ -99,7 +102,10 @@ Module MyLogic.
 
   (* And *)
   Inductive prod (A B: Type): Type := pair (a: A) (b: B).
+  Check prod nat bool.
+  Check pair _ _ 1 false.
   Arguments pair {A} {B}.
+  Check pair 1 false.
   
   Definition fst {A B: Type} (p: prod A B): A
     := match p with
@@ -110,6 +116,7 @@ Module MyLogic.
   Arguments conj {A} {B}.
   
   Locate "_ /\ _". (* Notation "A /\ B" := (and A B) : type_scope *)
+  Print Logic.and.
   
   Example and_prop (A B: Prop): A -> B -> and A B.
   Proof.
@@ -122,6 +129,9 @@ Module MyLogic.
   
   Example and_prop' (A B: Prop) (HA: A) (HB: B): and A B.
   Proof. split. { exact HA. } { exact HB. } Qed.
+  
+  Definition and_prop'' (A B: Prop): A -> B -> and A B 
+    := conj.
 
   Definition proj1 {A B: Prop} (p: and A B): A :=
     match p with
@@ -134,6 +144,13 @@ Module MyLogic.
   Print proj2.
   
   (* or *)
+  Inductive sum (A B: Type) : Type :=
+  | inl (a: A)
+  | inr (b: B).
+  
+  Arguments inl {A B}.
+  Arguments inr {A B}.
+
   Inductive or (A B: Prop): Prop :=  
   | or_introl (HA: A)
   | or_intror (HB: B).
@@ -142,6 +159,7 @@ Module MyLogic.
   Arguments or_intror {A} {B}.
   
   Locate "_ \/ _". (* Notation "A \/ B" := (or A B) : type_scope *)
+  Print or.
 
   Example or_l (A B: Prop): A -> or A B.
   Proof.
@@ -151,17 +169,24 @@ Module MyLogic.
   Qed.
   
   Print or_l.
-  
+    
   Example or_l' (A B: Prop) (HA: A): or A B
     := or_introl HA.
   
+  Example join (A B C: Prop): (A -> C) -> (B -> C) -> or A B -> C.
+  Proof.
+    intros HAC HBC HAB. destruct HAB as [HA | HB].
+    - apply HAC. exact HA.
+    - exact (HBC HB).
+  Qed.
+
   (* Negation: ~A = A -> False *)
   Definition not (A: Prop): Prop := A -> False.
   Notation "~ x" := (not x) : type_scope.
   
   Example contra (A B: Prop): (A -> B) -> (~B -> ~A).
   Proof.
-    intros H HnB. unfold not. intro HA. 
+    intros H HnB. (* unfold not. *) intro HA. 
     unfold not in HnB. apply HnB. 
     apply H. exact HA.
   Qed.
