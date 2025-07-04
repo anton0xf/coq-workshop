@@ -1,5 +1,5 @@
 # Coq workshop
-Материалы к воркшопам по Coq/Rocq
+Материалы к воркшопам по Coq/Rocq. Видео можно найти [тут](https://youtube.com/playlist?list=PLfkikHwnACaU3SFlJZ-fB2hZKppA6GfrM&si=qXOeQ1QAaNA1Wa9j) (а если ссылка на плейлист почему-то протухла, то в плейлистах сообщества [@ProgMsk](https://youtube.com/@progmsk?si=1Q2LyY00hHh2B0Ax)). 
 
 ## Ссылки
 * [Офиициальный сайт](https://rocq-prover.org/)
